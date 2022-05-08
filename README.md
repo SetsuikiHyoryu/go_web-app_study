@@ -21,27 +21,27 @@ E:.
 
 1. 创建 `main.go` 文件。
 
-```go
-package main
-
-import "net/http"
-
-func main() {
-	// 当请求到到根路径时执行回调函数
-	http.HandleFunc("/", func(responseWriter http.ResponseWriter, request *http.Request) {
-		responseWriter.Write([]byte("Hello World！"))
-	})
-
-	// 设置 web 服务器
-	http.ListenAndServe("localhost:9491", nil) // DefaultServeMux. 可以简单地理解为路由器
-}
-
-```
+   ```go
+   package main
+   
+   import "net/http"
+   
+   func main() {
+   	// 当请求到到根路径时执行回调函数
+   	http.HandleFunc("/", func(responseWriter http.ResponseWriter, request *http.Request) {
+   		responseWriter.Write([]byte("Hello World！"))
+   	})
+   
+   	// 设置 web 服务器
+   	http.ListenAndServe("localhost:9491", nil) // DefaultServeMux. 可以简单地理解为路由器
+   }
+   
+   ```
 
 2. 运行 `main.go` 文件。
 
-```console
-go run main.go
-```
+   ```console
+   go run main.go
+   ```
 
 3. 使用浏览器查看 `9491` 端口确认输出了 `Hello World!`
