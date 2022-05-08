@@ -2,12 +2,44 @@ package main
 
 import "net/http"
 
-func main() {
-	// 当请求到到根路径时执行回调函数
-	http.HandleFunc("/", func(responseWriter http.ResponseWriter, request *http.Request) {
-		responseWriter.Write([]byte("Hello World！"))
-	})
+// 自定义 Handler
+type helloHandler struct{}
 
-	// 设置 web 服务器
-	http.ListenAndServe("localhost:9491", nil) // DefaultServeMux. 可以简单地理解为路由器
+func (handler *helloHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte("Hello World！"))
+}
+
+type aboutHandler struct{}
+
+func (handler *aboutHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte("About!"))
+}
+
+// Hanlder 函数
+func welcome(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte("Welcome!"))
+}
+
+func home(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte("Home!"))
+}
+
+func main() {
+	_helloHandler := helloHandler{}
+	_aboutHandler := aboutHandler{}
+
+	// 创建服务器
+	server := http.Server{
+		Addr:    "localhost:9491",
+		Handler: nil, // DefaultServeMux
+	}
+
+	http.Handle("/hello", &_helloHandler)
+	http.Handle("/about", &_aboutHandler)
+	// 回调函数也可以是一个匿名函数
+	http.HandleFunc("/welcome", welcome)
+	// http.HandlerFunc 不是一个函数而是一个函数类型，这里是类型转换
+	http.Handle("/home", http.HandlerFunc(home))
+
+	server.ListenAndServe()
 }
