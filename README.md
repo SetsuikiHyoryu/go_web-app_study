@@ -165,3 +165,14 @@ func main() {
 }
 
 ```
+
+## 03 五个内置 handler
+
+### http.NotFoundHandler
+
+```go
+// 定义
+func NotFoundHandler() Handler
+```
+
+它给每个请求的响应都是 `404 page not found`
