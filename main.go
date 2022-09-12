@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -10,13 +10,24 @@ func main() {
 		Addr: "localhost:9491",
 	}
 
-	handler := func(writer http.ResponseWriter, request *http.Request) {
-		length := request.ContentLength
-		body := make([]byte, length)
-		request.Body.Read(body)
-		fmt.Fprintln(writer, string(body))
+	// handlerReadBody := func(writer http.ResponseWriter, request *http.Request) {
+	// 	length := request.ContentLength
+	// 	body := make([]byte, length)
+	// 	request.Body.Read(body)
+	// 	fmt.Fprintln(writer, string(body))
+	// }
+
+	handlerQuery := func(writer http.ResponseWriter, request *http.Request) {
+		url := request.URL
+		query := url.Query()
+
+		id := query["id"]
+		log.Println(id)
+
+		name := query.Get("name")
+		log.Println(name)
 	}
 
-	http.HandleFunc("/post", handler)
+	http.HandleFunc("/api", handlerQuery)
 	server.ListenAndServe()
 }
