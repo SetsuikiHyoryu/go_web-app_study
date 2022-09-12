@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hamburger Menu</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <header>
+        <input type="checkbox" id="toggler" />
+
+        <label for="toggler">
+          <div class="hamburger-container">
+            <span></span>
+            <span></span>
+          </div>
+        </label>
+
+        <div class="navigation-items">
+          <ul>
+            <li>Home</li>
+            <li>About</li>
+            <li>Connect</li>
+          </ul>
+        </div>
+      </header>
+    </div>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        align-items: center;
+        background: #000;
+        box-sizing: border-box;
+        display: flex;
+        height: 44px;
+        padding: 0 20px;
+        position: relative;
+      }
+
+      #toggler {
+        display: none;
+      }
+
+      .hamburger-container {
+        display: flex;
+        cursor: pointer;
+        flex-direction: column;
+        height: 20px;
+        justify-content: center;
+        width: 20px;
+      }
+
+      .hamburger-container span {
+        background: #fff;
+        display: block;
+        height: 1px;
+        position: relative;
+        top: 0;
+        transition: transform 0.3s ease-in-out, top 0.3s ease-in-out 0.3s;
+      }
+
+      #toggler:checked + label .hamburger-container span:nth-child(1) {
+        top: 4px;
+        transform: rotate(45deg);
+        transition: top 0.3s ease-in-out, transform 0.3s ease-in-out 0.3s;
+      }
+
+      #toggler:checked + label .hamburger-container span:nth-child(2) {
+        top: -4px;
+        transform: rotate(-45deg);
+        transition: top 0.3s ease-in-out, transform 0.3s ease-in-out 0.3s;
+      }
+
+      .hamburger-container span:nth-child(2) {
+        margin: 7px 0 0;
+      }
+
+      .navigation-items {
+        background: rgba(0, 0, 0, 0.6);
+        position: absolute;
+        left: 0;
+        top: 44px;
+        transform: scaleY(0);
+        transition: transform 0.3s ease-in-out 0.2s;
+        transform-origin: 50% 0;
+        width: 100%;
+      }
+
+      #toggler:checked ~ .navigation-items {
+        transform: scaleY(1);
+      }
+
+      .navigation-items ul li {
+        color: #fff;
+      }
+    </style>
+  </body>
+</html>
