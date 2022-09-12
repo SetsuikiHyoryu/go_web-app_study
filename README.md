@@ -176,3 +176,18 @@ func NotFoundHandler() Handler
 ```
 
 它给每个请求的响应都是 `404 page not found`
+
+## 04 HTTP
+
+### HTTP 消息
+
+```txt
+// 请求 / 响应 行
+GET /Protocols/rfc2616/rfc2616.html HTTP/1.1
+// 任意数量的 Header
+Host: www.w3.org
+// 空行
+(空行)
+// 可选的消息体（Body）
+```
+
