@@ -1,77 +1,73 @@
 package main
 
 import (
+	"context"
+	"database/sql"
+	"fmt"
 	"log"
-	"math/rand"
-	"net/http"
-	"text/template"
-	"time"
+
+	// 数据库驱动。下划线为命名，因为不会直接将驱动拿来写代码，所以命名为下划线
+	_ "github.com/go-sql-driver/mysql"
 )
 
+var db *sql.DB
+
+const (
+	user     = "root"
+	password = "mysql"
+	database = "go_db"
+)
+
+/**
+* docker run --name go-web -e MYSQL_ROOT_PASSWORD=mysql -p 3306:3306 -d mysql
+* docker exec -it go-web bash
+ */
+
 func main() {
-	server := http.Server{
-		Addr: "localhost:9491",
+	connectString := fmt.Sprintf("%s:%s@/%s", user, password, database)
+
+	var _error error
+	// Open 的第一个参数名为数据库驱动的名称
+	db, _error = sql.Open("mysql", connectString)
+
+	if _error != nil {
+		log.Fatalln(_error.Error())
+		return
 	}
 
-	http.HandleFunc("/template", func(write http.ResponseWriter, request *http.Request) {
-		_template, _ := template.ParseFiles("template.html")
-		_template.Execute(write, "Hello World!")
-	})
+	_context := context.Background()
 
-	http.HandleFunc("/parse-files", func(write http.ResponseWriter, request *http.Request) {
-		// 方式一
-		// _template, _ := template.ParseFiles("template.html")
+	// PingContext 用来验证与数据库的连接是否仍然有效
+	_error = db.PingContext(_context)
 
-		// 方式二
-		_template := template.New("template")
-		_template, _ = _template.ParseFiles("template.html")
+	if _error != nil {
+		log.Fatalln(_error.Error())
+		return
+	}
 
-		_template.Execute(write, "Hello World!")
-	})
+	fmt.Println("Connected!")
 
-	http.HandleFunc("/parse-glob", func(write http.ResponseWriter, request *http.Request) {
-		_template, _ := template.ParseGlob("*.html")
-		_template.Execute(write, "Hello World!")
-	})
+	// 查询复数条数据
+	// list, _error := getMany(1)
 
-	http.HandleFunc("/execute-template", func(write http.ResponseWriter, request *http.Request) {
-		templates, _ := template.ParseFiles("template.html", "template02.html")
-		templates.ExecuteTemplate(write, "templatel02.html", "Hello World!")
-	})
+	// 查询一条数据
+	user, _ := getOne(2)
 
-	/** Full Example */
-	templates := loadTemplates()
+	user.name = "shamare"
+	// _error = user.Update()
 
-	http.HandleFunc("/", func(write http.ResponseWriter, request *http.Request) {
-		// 第一个字符是 /，所以将其切掉
-		fileName := request.URL.Path[1:]
-		_template := templates.Lookup(fileName)
+	user03 := customUser{
+		id:   3,
+		name: "suzuran",
+	}
 
-		if _template == nil {
-			write.WriteHeader(http.StatusNotFound)
-			return
-		}
+	_error = user03.Insert()
 
-		_error := _template.Execute(write, "hello world.")
+	if _error != nil {
+		log.Fatalln(_error.Error())
+		return
+	}
 
-		if _error != nil {
-			log.Fatalln(_error.Error())
-		}
-	})
-
-	// Actions
-	http.HandleFunc("/actions", func(write http.ResponseWriter, request *http.Request) {
-		_template, _ := template.ParseFiles("actions.html")
-		rand.Seed(time.Now().Unix())
-		_template.Execute(write, rand.Intn(10) > 5)
-	})
-
-	server.ListenAndServe()
-}
-
-func loadTemplates() *template.Template {
-	result := template.New("templates")
-	_template, _error := result.ParseGlob("*.html")
-	template.Must(_template, _error)
-	return result
+	resutl, _ := getOne(3)
+	fmt.Println(resutl)
 }
